@@ -64,6 +64,8 @@ static __inline__ Elf_Symndx _dl_gnu_hash (const unsigned char *name)
  * it to decode the hash table.  */
 static __inline__ Elf_Symndx _dl_elf_hash(const unsigned char *name)
 {
+/* START ARC LOCAL */
+#if 0
 	unsigned long hash=0;
 	unsigned long tmp;
 
@@ -80,6 +82,30 @@ static __inline__ Elf_Symndx _dl_elf_hash(const unsigned char *name)
 		hash ^= tmp >> 24;
 	}
 	return hash;
+#else /* Higher performance - back-translation from ARC assembly.  */
+	unsigned long r1,r2,r3;
+
+	r1 = name[0];
+	r3 = name[1];
+	r2 = *(name+=2);
+	if (__builtin_expect (r1 != 0, 1)) {
+		r1 <<= 4;
+		if (__builtin_expect (r3 != 0, 1)) {
+			r1 += r3;
+			r1 <<= 4;
+			while (__builtin_expect (r2 != 0, 1)) {
+				r1 += r2;
+				r2 = *++name;
+				r3 = r1 >> 20;
+				r1 <<= 4;
+				r3 &= ~0xff;
+				r1 ^= r3;
+			}
+		}
+	}
+	return r1 >> 4;
+#endif
+/* END ARC LOCAL */
 }
 
 /*

@@ -20,6 +20,13 @@
 #define ELFCLASSM	ELFCLASS64
 #endif
 
+/* START ARC LOCAL */
+#if defined(__A7__)
+#define MATCH_MACHINE(x) (x == EM_ARCOMPACT)
+#define ELFCLASSM       ELFCLASS32
+#endif
+/* END ARC LOCAL */
+
 #if defined(__arm__) || defined(__thumb__)
 #define MATCH_MACHINE(x) (x == EM_ARM)
 #define ELFCLASSM	ELFCLASS32

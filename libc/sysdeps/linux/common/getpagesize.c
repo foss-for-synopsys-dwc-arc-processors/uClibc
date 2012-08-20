@@ -19,6 +19,7 @@
 #include <unistd.h>
 #include <features.h>
 #include <sys/param.h>
+#include <bits/uClibc_page.h>
 
 extern size_t __pagesize;
 

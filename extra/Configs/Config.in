@@ -13,6 +13,11 @@ choice
 config TARGET_alpha
 	bool "alpha"
 
+# START ARC LOCAL
+config TARGET_arc
+	bool "arc"
+# END ARC LOCAL
+
 config TARGET_arm
 	bool "arm"
 
@@ -93,6 +98,12 @@ menu "Target Architecture Features and Options"
 if TARGET_alpha
 source "extra/Configs/Config.alpha"
 endif
+
+# START ARC LOCAL
+if TARGET_arc
+source "extra/Configs/Config.arc"
+endif
+# END ARC LOCAL
 
 if TARGET_arm
 source "extra/Configs/Config.arm"
@@ -354,6 +365,16 @@ config LDSO_GNU_HASH_SUPPORT
 	  peacefully coexist in the same process.
 
 	  If you want to use this new feature, answer Y
+
+config LDSO_STATS_SUPPORT
+	bool "Enable ldso statistics"
+	depends on HAVE_SHARED
+	default n
+	help
+	  Adds statistics gathering/reporting about dynamic linker processing
+	  using LD_STATS env variable. As of now the only stats reported is the
+	  total time taken to boot-strap a dynamically linked app - including
+	  loading all the needed dsos and resolving all the non-lazy symbols.
 
 config HAS_NO_THREADS
 	bool

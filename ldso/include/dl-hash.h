@@ -136,8 +136,15 @@ extern char * _dl_not_lazy;
 
 static __inline__ int _dl_symbol(char * name)
 {
+/* START ARC LOCAL */
+#ifndef __A7__	
   if (name[0] != '_' || name[1] != 'd' || name[2] != 'l' || name[3] != '_')
     return 0;
+#else
+  if (name[0] != '_' || name [1] != '_' || name[2] != 'd' || name [3] != 'l' || name[4] != '_')
+    return 0;
+#endif
+/* END ARC LOCAL */
   return 1;
 }
 

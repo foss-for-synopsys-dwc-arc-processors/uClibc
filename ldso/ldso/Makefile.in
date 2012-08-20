@@ -7,8 +7,10 @@
 
 CFLAGS-ldso := -DNOT_IN_libc -DIS_IN_rtld $(SSP_DISABLE_FLAGS)
 
+ifneq ($(TARGET_ARCH),arc)
 # This stuff will not work with -fomit-frame-pointer
 CFLAGS-ldso += -fno-omit-frame-pointer
+endif
 
 CFLAGS-ldso += -I$(top_srcdir)ldso/ldso/$(TARGET_ARCH) -I$(top_srcdir)ldso/include -I$(top_srcdir)ldso/ldso
 CFLAGS-ldso += -DUCLIBC_RUNTIME_PREFIX=\"$(RUNTIME_PREFIX)\" -DUCLIBC_LDSO=\"$(UCLIBC_LDSO)\"
@@ -23,6 +25,9 @@ else
 LDFLAGS-$(UCLIBC_LDSO_NAME).so := $(LDFLAGS_NOSTRIP) -Wl,-z,defs
 endif
 LDFLAGS-$(UCLIBC_LDSO_NAME).so += -Wl,-e,_start -Wl,-z,now -Wl,-Bsymbolic -Wl,--export-dynamic -Wl,--sort-common -Wl,--discard-locals -Wl,--discard-all -Wl,--no-undefined
+ifneq ($(SUPPORT_LD_DEBUG),y)
+LDFLAGS-$(UCLIBC_LDSO_NAME).so += -Wl,--no-undefined
+endif
 
 ldso_FULL_NAME := $(UCLIBC_LDSO_NAME)-$(VERSION).so
 

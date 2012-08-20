@@ -157,6 +157,7 @@ OPTIMIZATION+=$(call check_gcc,-funit-at-a-time,)
 GCC_MAJOR_VER?=$(shell $(CC) -dumpversion | cut -d . -f 1)
 #GCC_MINOR_VER?=$(shell $(CC) -dumpversion | cut -d . -f 2)
 
+ifneq ($(TARGET_ARCH),arc)
 ifeq ($(GCC_MAJOR_VER),4)
 # shrinks code, results are from 4.0.2
 # 0.36%
@@ -165,6 +166,7 @@ OPTIMIZATION+=$(call check_gcc,-fno-tree-loop-optimize,)
 OPTIMIZATION+=$(call check_gcc,-fno-tree-dominator-opts,)
 # 0.1%
 OPTIMIZATION+=$(call check_gcc,-fno-strength-reduce,)
+endif
 endif
 
 CPU_CFLAGS-$(UCLIBC_FORMAT_SHARED_FLAT) += -mid-shared-library
@@ -177,6 +179,15 @@ PICFLAG-y := -fPIC
 PICFLAG-$(UCLIBC_FORMAT_FDPIC_ELF) := -mfdpic
 PICFLAG := $(PICFLAG-y)
 PIEFLAG_NAME:=-fPIE
+
+# START ARC LOCAL
+# Some nice CPU specific optimizations
+ifeq ($(TARGET_ARCH),arc)
+        CPU_CFLAGS-n:="-da"
+        CPU_CFLAGS-$(CONFIG_ARCH_ARC_A7):="-mA7"
+        CPU_LDFLAGS-$(CONFIG_ARCH_ARC_A7):="-marclinux"
+endif
+# END ARC LOCAL
 
 # Some nice CPU specific optimizations
 ifeq ($(TARGET_ARCH),i386)

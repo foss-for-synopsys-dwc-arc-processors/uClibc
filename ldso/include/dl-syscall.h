@@ -124,7 +124,7 @@ static __always_inline _syscall0(gid_t, _dl_getpid);
 static __always_inline _syscall3(int, _dl_readlink, const char *, path, char *, buf,
                         size_t, bufsiz);
 
-#ifdef __UCLIBC_HAS_SSP__
+#if defined(__UCLIBC_HAS_SSP__) || defined(__LDSO_STATS_SUPPORT__)
 # include <sys/time.h>
 # define __NR__dl_gettimeofday __NR_gettimeofday
 static __always_inline _syscall2(int, _dl_gettimeofday, struct timeval *, tv,
