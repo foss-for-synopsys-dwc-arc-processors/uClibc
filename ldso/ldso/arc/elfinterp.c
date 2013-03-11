@@ -47,7 +47,7 @@ unsigned long _dl_linux_resolver(struct elf_resolve *tpnt, unsigned int plt_pc)
 	got_addr = (unsigned int *)(this_reloc->r_offset + tpnt->loadaddr);
 
 	/* Get the address of the GOT entry */
-	new_addr = _dl_find_hash(symname, &tpnt->symbol_scope, tpnt,
+	new_addr = _dl_find_hash(symname, &_dl_loaded_modules->symbol_scope, tpnt,
                             ELF_RTYPE_CLASS_PLT, NULL);
 
 	if (unlikely(!new_addr)) {
