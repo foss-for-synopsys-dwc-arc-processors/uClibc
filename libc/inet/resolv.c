@@ -3531,27 +3531,24 @@ __res_vinit(res_state rp, int preinit)
 }
 
 static void
-__res_iclose(res_state statp)
+__res_iclose(void)
 {
-	struct __res_state * rp = statp;
 	__UCLIBC_MUTEX_LOCK(__resolv_lock);
-	if (rp == NULL)
-		rp = __resp;
 	__close_nameservers();
 	__res_sync = NULL;
 #ifdef __UCLIBC_HAS_IPV6__
 	{
-		char *p1 = (char*) &(rp->nsaddr_list[0]);
-		unsigned int m = 0;
+		char *p1 = (char*) &(_res.nsaddr_list[0]);
+		int m = 0;
 		/* free nsaddrs[m] if they do not point to nsaddr_list[x] */
-		while (m < ARRAY_SIZE(rp->_u._ext.nsaddrs)) {
-			char *p2 = (char*)(rp->_u._ext.nsaddrs[m++]);
-			if (p2 < p1 || (p2 - p1) > (signed)sizeof(rp->nsaddr_list))
+		while (m < ARRAY_SIZE(_res._u._ext.nsaddrs)) {
+			char *p2 = (char*)(_res._u._ext.nsaddrs[m++]);
+			if (p2 < p1 || (p2 - p1) > sizeof(_res.nsaddr_list))
 				free(p2);
 		}
 	}
 #endif
-	memset(rp, 0, sizeof(struct __res_state));
+	memset(&_res, 0, sizeof(_res));
 	__UCLIBC_MUTEX_UNLOCK(__resolv_lock);
 }
 
@@ -3566,13 +3563,13 @@ __res_iclose(res_state statp)
 void
 res_nclose(res_state statp)
 {
-	__res_iclose(statp);
+	__res_iclose();
 }
 
 #ifdef __UCLIBC_HAS_BSD_RES_CLOSE__
 void res_close(void)
 {
-	__res_iclose(NULL);
+	__res_iclose();
 }
 #endif
 
