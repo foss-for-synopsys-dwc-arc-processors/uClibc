@@ -10,7 +10,7 @@ ___gnu_compiled_c:
 	j.d [blink]
 	add sp,sp,4
 .Lfe2:
-	.size	 _init,.Lfe2-_init
+	.size	 _init,.-_init
 
 	.section .fini
 	.align 4
@@ -22,4 +22,4 @@ ___gnu_compiled_c:
 	j.d [blink]
 	add sp,sp,4
 .Lfe3:
-	.size	 _fini,.Lfe3-_fini
+	.size	 _fini,.-_fini
