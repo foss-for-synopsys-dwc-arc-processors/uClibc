@@ -88,3 +88,9 @@ ENTRY(strcmp)
 	j_s.d	[blink]
 	sub	r0,r2,r3
 ENDFUNC(strcmp)
+
+libc_hidden_def(strcmp)
+#ifndef __UCLIBC_HAS_LOCALE__
+strong_alias(strcmp,strcoll)
+libc_hidden_def(strcoll)
+#endif
