@@ -1,5 +1,6 @@
 /* Copyright (C) 2007 ARC International (UK) LTD */
 
+#include <features.h>
 #include <bits/asm.h>
 
 /* This is optimized primarily for the ARC700.
