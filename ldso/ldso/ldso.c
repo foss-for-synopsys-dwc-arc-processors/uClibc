@@ -76,6 +76,13 @@ char *_dl_debug_nofixups  = NULL;
 char *_dl_debug_bindings  = NULL;
 int   _dl_debug_file      = 2;
 #endif
+#ifdef __LDSO_STATS_SUPPORT__
+/* Toggle to gather/report various stats about dynamic linking.
+ * On-purpose not included under __SUPPORT_LD_DEBUG__ since user may want
+ * to instrument the dynamic linker with and w/o the above debugging info.
+ */
+char *_dl_debug_stats     = 0;
+#endif
 
 #ifdef __DSBT__
 void **_dl_ldso_dsbt = NULL;
@@ -431,6 +438,12 @@ void *_dl_get_ready_to_run(struct elf_resolve *tpnt, DL_LOADADDR_TYPE load_addr,
 	void *tcbp = NULL;
 #endif
 
+#ifdef __LDSO_STATS_SUPPORT__
+	struct timeval tv0, tv1;
+
+	_dl_gettimeofday(&tv0, NULL);
+#endif
+
 	/* Wahoo!!! We managed to make a function call!  Get malloc
 	 * setup so we can use _dl_dprintf() to print debug noise
 	 * instead of the SEND_STDERR macros used in dl-startup.c */
@@ -778,6 +791,9 @@ of this helper program; chances are you did not intend to run this program.\n\
 			_dl_debug_bindings = _dl_strstr(_dl_debug, "bind");
 		}
 	}
+#ifdef __LDSO_STATS_SUPPORT__
+	_dl_debug_stats = _dl_getenv("LD_STATS", envp);
+#endif
 
 	{
 		const char *dl_debug_output;
@@ -1424,6 +1440,14 @@ of this helper program; chances are you did not intend to run this program.\n\
 	/* Notify the debugger that all objects are now mapped in.  */
 	_dl_debug_addr->r_state = RT_CONSISTENT;
 	_dl_debug_state();
+
+#ifdef __LDSO_STATS_SUPPORT__
+	if (_dl_debug_stats) {
+		_dl_gettimeofday(&tv1, NULL);
+		_dl_dprintf(2, "Time to load secs:usecs %d:%d\n",
+				tv1.tv_sec - tv0.tv_sec, tv1.tv_usec - tv0.tv_usec);
+	}
+#endif
 
 #ifdef __LDSO_STANDALONE_SUPPORT__
 	if (_start == (void *) auxvt[AT_ENTRY].a_un.a_val)

@@ -170,7 +170,7 @@ _dl_pread(int fd, void *buf, size_t count, off_t offset)
 }
 #endif
 
-#ifdef __UCLIBC_HAS_SSP__
+#if defined(__UCLIBC_HAS_SSP__) || defined(__LDSO_STATS_SUPPORT__)
 # include <sys/time.h>
 # define __NR__dl_gettimeofday __NR_gettimeofday
 static __always_inline _syscall2(int, _dl_gettimeofday, struct timeval *, tv,

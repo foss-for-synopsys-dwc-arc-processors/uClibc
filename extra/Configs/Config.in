@@ -489,6 +489,16 @@ config LDSO_GNU_HASH_SUPPORT
 
 	  If you want to use this new feature, answer Y
 
+config LDSO_STATS_SUPPORT
+	bool "Enable ldso statistics"
+	depends on HAVE_SHARED
+	default n
+	help
+	  Adds statistics gathering/reporting about dynamic linker processing
+	  using LD_STATS env variable. As of now the only stats reported is the
+	  total time taken to boot-strap a dynamically linked app - including
+	  loading all the needed dsos and resolving all the non-lazy symbols.
+
 choice
 	prompt "Thread support"
 	#default UCLIBC_HAS_THREADS_NATIVE if (TARGET_alpha || TARGET_arm || TARGET_i386 || TARGET_mips || TARGET_powerpc || TARGET_sh || TARGET_sh64)
