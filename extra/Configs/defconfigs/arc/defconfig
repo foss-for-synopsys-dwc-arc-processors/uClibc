@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
-# Version: 0.9.33.2
-# Mon Feb 25 17:55:41 2013
+# Version: 0.9.34-git
+# Fri Apr 12 13:30:15 2013
 #
 # TARGET_alpha is not set
 TARGET_arc=y
@@ -18,6 +18,7 @@ TARGET_arc=y
 # TARGET_i960 is not set
 # TARGET_ia64 is not set
 # TARGET_m68k is not set
+# TARGET_metag is not set
 # TARGET_microblaze is not set
 # TARGET_mips is not set
 # TARGET_nios is not set
@@ -71,6 +72,7 @@ LDSO_PRELOAD_ENV_SUPPORT=y
 # LDSO_PRELINK_SUPPORT is not set
 UCLIBC_STATIC_LDCONFIG=y
 LDSO_RUNPATH=y
+# LDSO_SAFE_RUNPATH is not set
 LDSO_SEARCH_INTERP_PATH=y
 LDSO_LD_LIBRARY_PATH=y
 # LDSO_NO_CLEANUP is not set
@@ -172,7 +174,6 @@ UCLIBC_BUILD_ALL_LOCALE=y
 # UCLIBC_HAS_GLIBC_DIGIT_GROUPING is not set
 # UCLIBC_HAS_GLIBC_CUSTOM_PRINTF is not set
 UCLIBC_PRINTF_SCANF_POSITIONAL_ARGS=9
-# UCLIBC_HAS_SCANF_GLIBC_A_FLAG is not set
 # UCLIBC_HAS_STDIO_BUFSIZ_NONE is not set
 # UCLIBC_HAS_STDIO_BUFSIZ_256 is not set
 # UCLIBC_HAS_STDIO_BUFSIZ_512 is not set
@@ -207,8 +208,8 @@ UCLIBC_HAS_REGEX_OLD=y
 UCLIBC_HAS_FNMATCH=y
 UCLIBC_HAS_FNMATCH_OLD=y
 # UCLIBC_HAS_WORDEXP is not set
-# UCLIBC_HAS_NFTW is not set
-# UCLIBC_HAS_FTW is not set
+UCLIBC_HAS_NFTW=y
+UCLIBC_HAS_FTW=y
 # UCLIBC_HAS_FTS is not set
 UCLIBC_HAS_GLOB=y
 # UCLIBC_HAS_GNU_GLOB is not set
