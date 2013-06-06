@@ -27,7 +27,7 @@
 
 ENTRY(__default_rt_sa_restorer)
     mov r8, __NR_rt_sigreturn
-    trap0
+    ARC_TRAP_INSN
 ENDFUNC(__default_rt_sa_restorer)
 
 libc_hidden_def(__default_rt_sa_restorer)

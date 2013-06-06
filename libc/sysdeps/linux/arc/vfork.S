@@ -42,7 +42,7 @@ ENTRY(vfork)
 	mov   r3, 0
 	mov   r4, 0
 #endif
-	trap0
+	ARC_TRAP_INSN
 
 	sub.f 0, r0, 0
 	jge [blink]

@@ -568,6 +568,8 @@ endif
 
 ifeq ($(TARGET_ARCH),arc)
         CPU_CFLAGS-$(CONFIG_ARC_CPU_700) += -mA7
+        CPU_CFLAGS-$(CONFIG_ARC_CPU_HS) += -mcpu=ARCv2EM
+        ASFLAGS-$(CONFIG_ARC_CPU_HS) += -mEM
         CPU_LDFLAGS-y += $(CPU_CFLAGS) -marclinux
 endif
 

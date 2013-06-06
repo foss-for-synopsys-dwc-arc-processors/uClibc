@@ -57,7 +57,8 @@ ENTRY(clone)
 	mov	r3, r5		; libc @tls
 	mov	r4, r6		; libc @ctid
 	mov	r8, __NR_clone
-	trap0
+
+	ARC_TRAP_INSN
 
 	sub.f	0, r0, 0	; return code : 0 new process, !0 parent
 	blt	.L__sys_err	; < 0 (signed) error

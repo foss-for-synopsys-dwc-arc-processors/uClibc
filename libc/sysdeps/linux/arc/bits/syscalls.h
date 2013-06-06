@@ -105,6 +105,12 @@ extern int __syscall_error (int);
  * for syscall itself.
  *-------------------------------------------------------------------------*/
 
+#ifdef CONFIG_ARC_CPU_700
+#define ARC_TRAP_INSN	"trap0          \n\t"
+#else
+#define ARC_TRAP_INSN	"trap_s 0        \n\t"
+#endif
+
 #define INTERNAL_SYSCALL_NCS(nm, err, nr_args, args...)	\
 ({							\
 	/* Per ABI, r0 is 1st arg and return reg */	\
@@ -113,7 +119,7 @@ extern int __syscall_error (int);
 	LOAD_ARGS_##nr_args (__ret, args)		\
 							\
         __asm__ volatile (				\
-		"trap0          \n\t"			\
+		ARC_TRAP_INSN				\
 		: "+r" (__ret)				\
 		: "r"(_sys_num) ASM_ARGS_##nr_args	\
 		: "memory");				\
@@ -210,6 +216,15 @@ type name(C_DECL_ARGS_##nargs(args)) {					\
 #define _syscall7(args...)		SYSCALL_FUNC(7, args)
 
 #endif
+
+#else
+
+#ifdef CONFIG_ARC_CPU_700
+#define ARC_TRAP_INSN	trap0
+#else
+#define ARC_TRAP_INSN	trap_s 0
+#endif
+
 
 #endif /* __ASSEMBLER__ */
 
