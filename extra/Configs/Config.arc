@@ -17,5 +17,7 @@ choice
 config CONFIG_ARC_CPU_700
 	bool "ARC700"
 	select ARCH_HAS_MMU
+	help
+	  ARCompact ISA based ARC CPU
 
 endchoice

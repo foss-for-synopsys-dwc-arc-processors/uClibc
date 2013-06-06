@@ -567,8 +567,8 @@ ifeq ($(TARGET_ARCH),c6x)
 endif
 
 ifeq ($(TARGET_ARCH),arc)
-        CPU_CFLAGS-$(CONFIG_ARCH_ARC_A7):="-mA7"
-        CPU_LDFLAGS-$(CONFIG_ARCH_ARC_A7):="-marclinux"
+        CPU_CFLAGS-$(CONFIG_ARC_CPU_700) += -mA7
+        CPU_LDFLAGS-y += $(CPU_CFLAGS) -marclinux
 endif
 
 $(eval $(call check-gcc-var,$(PIEFLAG_NAME)))

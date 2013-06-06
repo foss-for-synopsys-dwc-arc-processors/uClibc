@@ -1,7 +1,7 @@
 #
 # Automatically generated make config: don't edit
 # Version: 0.9.34-git
-# Fri Apr 12 13:30:15 2013
+# Thu Jun  6 14:10:10 2013
 #
 # TARGET_alpha is not set
 TARGET_arc=y
@@ -100,6 +100,7 @@ UCLIBC_SUSV4_LEGACY=y
 # UCLIBC_HAS_STUBS is not set
 UCLIBC_HAS_SHADOW=y
 # UCLIBC_HAS_PROGRAM_INVOCATION_NAME is not set
+UCLIBC_HAS___PROGNAME=y
 UCLIBC_HAS_PTY=y
 ASSUME_DEVPTS=y
 UNIX98PTY_ONLY=y
@@ -236,7 +237,7 @@ UCLIBC_BUILD_NOEXECSTACK=y
 # Development/debugging options
 #
 CROSS_COMPILER_PREFIX="arc-linux-uclibc-"
-UCLIBC_EXTRA_CFLAGS="-mA7"
+UCLIBC_EXTRA_CFLAGS=""
 # DODEBUG is not set
 # DODEBUG_PT is not set
 # DOSTRIP is not set
