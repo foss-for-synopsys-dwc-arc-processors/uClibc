@@ -84,6 +84,8 @@ extern unsigned long _dl_linux_resolver(struct elf_resolve * tpnt,
 extern unsigned __udivmodsi4 (unsigned, unsigned)
   __attribute ((visibility("hidden")));
 
+#if defined(__A7__)
+/* using "C" causes an indirection via __umodsi3 -> __udivmodsi4 */
 #define do_rem(result, n, base)  ((result) =				\
 									\
 	__builtin_constant_p (base) ? (n) % (unsigned) (base) :		\
@@ -98,6 +100,10 @@ extern unsigned __udivmodsi4 (unsigned, unsigned)
 		r1;							\
 	})								\
 )
+#elif defined(__EM__)
+/* ARCv2 has hardware assisted divide/mod */
+#define do_rem(result, n, base)  ((result) = (n) % (unsigned) (base))
+#endif
 
 /* ELF_RTYPE_CLASS_PLT iff TYPE describes relocation of a PLT entry, so
    PLT entries should not be allowed to define the value.
