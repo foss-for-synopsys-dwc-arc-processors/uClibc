@@ -105,9 +105,9 @@ extern int __syscall_error (int);
  * for syscall itself.
  *-------------------------------------------------------------------------*/
 
-#if defined(__CONFIG_ARC_CPU_700__)
+#if defined(__A7__)
 #define ARC_TRAP_INSN	"trap0          \n\t"
-#elif defined(__CONFIG_ARC_CPU_HS__)
+#elif defined(__EM__)
 #define ARC_TRAP_INSN	"trap_s 0        \n\t"
 #endif
 
@@ -219,9 +219,9 @@ type name(C_DECL_ARGS_##nargs(args)) {					\
 
 #else
 
-#if defined(__CONFIG_ARC_CPU_700__)
+#if defined(__A7__)
 #define ARC_TRAP_INSN	trap0
-#elif defined(__CONFIG_ARC_CPU_HS__)
+#elif defined(__EM__)
 #define ARC_TRAP_INSN	trap_s 0
 #endif
 
