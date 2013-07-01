@@ -71,11 +71,16 @@ do {										\
 } while(0)
 
 /* Here we define the magic numbers that this dynamic loader should accept */
-#define MAGIC1 EM_ARCOMPACT
-#undef  MAGIC2
 
-/* Used for error messages */
-#define ELF_TARGET "ARC"
+#if defined(__A7__)
+#define MAGIC1 EM_ARCOMPACT
+#define ELF_TARGET "ARCompact"	/* For error messages */
+#elif defined(__EM__)
+#define MAGIC1 EM_ARCV2
+#define ELF_TARGET "ARCv2"	/* For error messages */
+#endif
+
+#undef  MAGIC2
 
 struct elf_resolve;
 extern unsigned long _dl_linux_resolver(struct elf_resolve * tpnt,

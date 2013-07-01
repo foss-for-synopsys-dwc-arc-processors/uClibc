@@ -269,6 +269,7 @@ typedef struct
 #define EM_CRX		114		/* National Semiconductor CRX */
 #define EM_NUM		95
 #define EM_TI_C6000	140
+#define EM_ARCV2	195		/* ARCv2 Cores */
 
 /* If it is necessary to assign new unofficial EM_* values, please pick large
    random numbers (0x8523, 0xa7f2, etc.) to minimize the chances of collision
