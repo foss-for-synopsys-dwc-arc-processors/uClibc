@@ -1,6 +1,7 @@
 /* Copyright (C) 2007 ARC International (UK) LTD */
 
 #include <bits/asm.h>
+#include <features.h>
 
 /* ARC700 has a relatively long pipeline and branch prediction, so we want
    to avoid branches that are hard to predict.  On the other hand, the
@@ -115,3 +116,7 @@ ENTRY(strchr)
 	mov.mi	r0,0
 #endif /* ENDIAN */
 ENDFUNC(strchr)
+
+#ifdef __UCLIBC_SUSV3_LEGACY__
+strong_alias(strchr,index)
+#endif
