@@ -12,6 +12,12 @@
  */
 #include "ldso.h"
 
+#if defined(__A7__)
+#define PLT_SIZE	12
+#else
+#define PLT_SIZE	16
+#endif
+
 extern int _dl_linux_resolve(void);
 
 unsigned long _dl_linux_resolver(struct elf_resolve *tpnt, unsigned int plt_pc)
@@ -34,7 +40,7 @@ unsigned long _dl_linux_resolver(struct elf_resolve *tpnt, unsigned int plt_pc)
 	 * compute the idx of the yet-unresolved PLT entry in .plt
          * Same idx will be used to find the relo entry in .rela.plt
 	 */
-	plt_idx = (plt_pc - plt_base)/0xc  - 2; /* ignoring 2 dummy PLTs */
+	plt_idx = (plt_pc - plt_base)/PLT_SIZE  - 2; /* ignoring 2 dummy PLTs */
 
 	this_reloc = rel_base + plt_idx;
 
