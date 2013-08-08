@@ -1,6 +1,7 @@
 /* Copyright (C) 2007 ARC International (UK) LTD */
 
 #include <bits/asm.h>
+#include <features.h>
 
 #ifdef __LITTLE_ENDIAN__
 #define WORD2 r2
@@ -115,3 +116,7 @@ ENTRY(memcmp)
 	j_s.d	[blink]
 	mov	r0,0
 ENDFUNC(memcmp)
+
+#ifdef __UCLIBC_SUSV3_LEGACY__
+strong_alias(memcmp,bcmp)
+#endif
