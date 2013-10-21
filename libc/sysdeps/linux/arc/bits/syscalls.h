@@ -105,8 +105,9 @@ extern int __syscall_error (int);
 ({							\
 	/* Per ABI, r0 is 1st arg and return reg */	\
 	register int __ret __asm__("r0");		\
-	register int _sys_num __asm__("r8") = (nm);	\
-	LOAD_ARGS_##nr_args (__ret, args)		\
+	register int _sys_num __asm__("r8");		\
+							\
+	LOAD_ARGS_##nr_args (nm, args)			\
 							\
         __asm__ volatile (				\
 		ARC_TRAP_INSN				\
@@ -127,44 +128,52 @@ extern int __syscall_error (int);
 #define ASM_ARGS_6	ASM_ARGS_5, "r" (_arg6)
 #define ASM_ARGS_7	ASM_ARGS_6, "r" (_arg7)
 
-/* Macros for converting sys-call wrapper args into sys call args
- * Note that this is just for sanity check as they are BOUND to be in same
- * order. The wrapper args by defn is to match sys-call args order.
- * e.g.
- * _syscall4( int, syscallname, vineet, rajesh, simon, mitesh)
- *  will cause the compiler to setup r0 = vineet, r1 = rajesh etc before
- *  invoking the sys-call wrapper. Thus args are already in ABI specified
- *  order for sys call
+/* Macros for converting sys-call wrapper args into sys call args */
+#define LOAD_ARGS_0(nm, arg)					\
+	_sys_num = (int) (nm);					\
+
+#define LOAD_ARGS_1(nm, arg1) 					\
+	__ret = (int) (arg1);					\
+	LOAD_ARGS_0 (nm, arg1)
+
+/*
+ * Note that the use of _tmpX might look superflous, however it is needed
+ * to ensure that register variables are not clobbered if arg happens to be
+ * a function call itself. e.g. sched_setaffinity() calling getpid() for arg2
+ *
+ * Also this specific order of recursive calling is important to segregate
+ * the tmp args evaluation (function call case described above) and assigment
+ * of register variables
  */
-#define LOAD_ARGS_0(__ret, arg)
+#define LOAD_ARGS_2(nm, arg1, arg2)				\
+	int _tmp2 = (int) (arg2);				\
+	LOAD_ARGS_1 (nm, arg1)					\
+	register int _arg2 __asm__ ("r1") = _tmp2;
 
-/* Per ABI, r0 is 1st arg and return reg */
-#define LOAD_ARGS_1(__ret, arg1) 					\
-	__ret = (int) (arg1);
+#define LOAD_ARGS_3(nm, arg1, arg2, arg3)			\
+	int _tmp3 = (int) (arg3);				\
+	LOAD_ARGS_2 (nm, arg1, arg2)				\
+	register int _arg3 __asm__ ("r2") = _tmp3;
 
-#define LOAD_ARGS_2(__ret, arg1, arg2)					\
-	register int _arg2 __asm__ ("r1") = (int) (arg2);		\
-	LOAD_ARGS_1 (__ret, arg1)
+#define LOAD_ARGS_4(nm, arg1, arg2, arg3, arg4)			\
+	int _tmp4 = (int) (arg4);				\
+	LOAD_ARGS_3 (nm, arg1, arg2, arg3)			\
+	register int _arg4 __asm__ ("r3") = _tmp4;
 
-#define LOAD_ARGS_3(__ret, arg1, arg2, arg3)				\
-	register int _arg3 __asm__ ("r2") = (int) (arg3);		\
-	LOAD_ARGS_2 (__ret, arg1, arg2)
+#define LOAD_ARGS_5(nm, arg1, arg2, arg3, arg4, arg5)		\
+	int _tmp5 = (int) (arg5);				\
+	LOAD_ARGS_4 (nm, arg1, arg2, arg3, arg4)		\
+	register int _arg5 __asm__ ("r4") = _tmp5;
 
-#define LOAD_ARGS_4(__ret, arg1, arg2, arg3, arg4)			\
-	register int _arg4 __asm__ ("r3") = (int) (arg4);		\
-	LOAD_ARGS_3 (__ret, arg1, arg2, arg3)
+#define LOAD_ARGS_6(nm,  arg1, arg2, arg3, arg4, arg5, arg6)	\
+	int _tmp6 = (int) (arg6);				\
+	LOAD_ARGS_5 (nm, arg1, arg2, arg3, arg4, arg5)		\
+	register int _arg6 __asm__ ("r5") = _tmp6;
 
-#define LOAD_ARGS_5(__ret, arg1, arg2, arg3, arg4, arg5)		\
-	register int _arg5 __asm__ ("r4") = (int) (arg5);		\
-	LOAD_ARGS_4 (__ret, arg1, arg2, arg3, arg4)
-
-#define LOAD_ARGS_6(__ret,  arg1, arg2, arg3, arg4, arg5, arg6)		\
-	register int _arg6 __asm__ ("r5") = (int) (arg6);		\
-	LOAD_ARGS_5 (__ret, arg1, arg2, arg3, arg4, arg5)
-
-#define LOAD_ARGS_7(__ret, arg1, arg2, arg3, arg4, arg5, arg6, arg7)	\
-	register int _arg7 __asm__ ("r6") = (int) (arg7);		\
-	LOAD_ARGS_6 (__ret, arg1, arg2, arg3, arg4, arg5, arg6)
+#define LOAD_ARGS_7(nm, arg1, arg2, arg3, arg4, arg5, arg6, arg7)\
+	int _tmp7 = (int) (arg7);				\
+	LOAD_ARGS_6 (nm, arg1, arg2, arg3, arg4, arg5, arg6)	\
+	register int _arg7 __asm__ ("r6") = _tmp7;
 
 #else
 
