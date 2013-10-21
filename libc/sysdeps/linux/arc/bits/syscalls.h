@@ -18,12 +18,6 @@
 
 #include <errno.h>
 
-#define SYS_ify(syscall_name)	(__NR_##syscall_name)
-
-/*-------------------------------------------------------------------------
- * Core syscall wrapper for ARC: Common to ARC700 and 600
- *-------------------------------------------------------------------------*/
-
 /* call for errno-setting seperated off to avoid push/pop unconditionally */
 
 #ifdef IS_IN_rtld
@@ -57,10 +51,6 @@ extern int __syscall_error (int);
 /* -1 to -1023 as valid error values will suffice for some time */
 #define INTERNAL_SYSCALL_ERROR_P(val, err)		\
 	((unsigned int) (val) > (unsigned int) -1024)
-
-#define INTERNAL_SYSCALL_ERRNO(val, err)        (-(val))
-
-#define INTERNAL_SYSCALL_DECL(err) 		do { } while (0)
 
 /*
  * Standard sycall wrapper:
@@ -175,47 +165,6 @@ extern int __syscall_error (int);
 #define LOAD_ARGS_7(__ret, arg1, arg2, arg3, arg4, arg5, arg6, arg7)	\
 	register int _arg7 __asm__ ("r6") = (int) (arg7);		\
 	LOAD_ARGS_6 (__ret, arg1, arg2, arg3, arg4, arg5, arg6)
-
-#ifndef _syscall0
-
-#define C_DECL_ARGS_0()			void
-#define C_DECL_ARGS_1(t, v)		t v
-#define C_DECL_ARGS_2(t, v, args...)	t v, C_DECL_ARGS_1(args)
-#define C_DECL_ARGS_3(t, v, args...)	t v, C_DECL_ARGS_2(args)
-#define C_DECL_ARGS_4(t, v, args...)	t v, C_DECL_ARGS_3(args)
-#define C_DECL_ARGS_5(t, v, args...)	t v, C_DECL_ARGS_4(args)
-#define C_DECL_ARGS_6(t, v, args...)	t v, C_DECL_ARGS_5(args)
-
-#define C_ARGS_0()
-#define C_ARGS_1(t, v)			v
-#define C_ARGS_2(t, v, args...)		v, C_ARGS_1(args)
-#define C_ARGS_3(t, v, args...)		v, C_ARGS_2(args)
-#define C_ARGS_4(t, v, args...)		v, C_ARGS_3(args)
-#define C_ARGS_5(t, v, args...)		v, C_ARGS_4(args)
-#define C_ARGS_6(t, v, args...)		v, C_ARGS_5(args)
-
-#define SYSCALL_FUNC(nargs, type, name, args...)			\
-type name(C_DECL_ARGS_##nargs(args)) {					\
-	return (type)INLINE_SYSCALL(name, nargs, C_ARGS_##nargs(args));	\
-}
-
-#define SYSCALL_NOERR_FUNC(nargs, type, name, args...)			\
-type name(C_DECL_ARGS_##nargs(args)) {					\
-	return (type)INLINE_SYSCALL_NOERR(name, nargs, C_ARGS_##nargs(args));	\
-}
-
-#define _syscall0(args...)		SYSCALL_FUNC(0, args)
-#define _syscall_noerr0(args...)	SYSCALL_NOERR_FUNC(0, args)
-#define _syscall1(args...)		SYSCALL_FUNC(1, args)
-#define _syscall_noerr1(args...)	SYSCALL_NOERR_FUNC(1, args)
-#define _syscall2(args...)		SYSCALL_FUNC(2, args)
-#define _syscall3(args...)		SYSCALL_FUNC(3, args)
-#define _syscall4(args...)		SYSCALL_FUNC(4, args)
-#define _syscall5(args...)		SYSCALL_FUNC(5, args)
-#define _syscall6(args...)		SYSCALL_FUNC(6, args)
-#define _syscall7(args...)		SYSCALL_FUNC(7, args)
-
-#endif
 
 #else
 
