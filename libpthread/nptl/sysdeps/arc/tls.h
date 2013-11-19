@@ -39,13 +39,19 @@ typedef struct
 #else /* __ASSEMBLER__ */
 # include <tcb-offsets.h>
 
+#ifdef __A7__
+#define __ARC_TP_REG	r25
+#elif defined(__HS__)
+#define __ARC_TP_REG	r30
+#endif
+
 .macro THREAD_SELF reg
 	# struct pthread is just ahead of TCB
-	sub     \reg, r25, TLS_PRE_TCB_SIZE
+	sub     \reg, __ARC_TP_REG, TLS_PRE_TCB_SIZE
 .endm
 
 .macro SET_TP  tcb
-	mov    r25, \tcb
+	mov    __ARC_TP_REG, \tcb
 .endm
 
 #endif /* __ASSEMBLER__ */
