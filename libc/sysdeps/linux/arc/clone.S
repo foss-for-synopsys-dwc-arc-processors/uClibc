@@ -25,6 +25,9 @@
 ;		int __user *parent_tidptr, void *tls,
 ;		int __user *child_tidptr)
 
+#define CLONE_VM		0x00000100
+#define CLONE_THREAD		0x00010000
+#define CLONE_THREAD_N_VM	(CLONE_THREAD | CLONE_VM)
 
 ENTRY(clone)
 	cmp	r0, 0		; @fn can't be NULL
@@ -38,7 +41,14 @@ ENTRY(clone)
 	mov	r11, r3
 
 	; adjust libc args for syscall
+
+#ifdef RESET_PID
+	mov_s	r12, r2		; safekeep flags for later
+	mov_s 	r0, r2		; libc @flags is 1st syscall arg
+#else
 	mov 	r0, r2		; libc @flags is 1st syscall arg
+#endif
+
 	mov	r2, r4		; libc @ptid
 	mov	r3, r5		; libc @tls
 	mov	r4, r6		; libc @ctid
@@ -48,6 +58,21 @@ ENTRY(clone)
 	cmp	r0, 0		; return code : 0 new process, !0 parent
 	blt	.L__sys_err2	; < 0 (signed) error
 	jnz	[blink]		; Parent returns
+
+	; ----- child starts here ---------
+#ifdef RESET_PID
+	mov_s	r2, CLONE_THREAD_N_VM
+	and_s	r2, r2, r12
+	brne	r2, r12, .Lgo_thread
+
+	mov	r8, __NR_clone
+	ARC_TRAP_INSN		; r0 has PID
+	THREAD_SELF r1		; Get to struct pthread (just before TCB)
+	st	r0, [r1, PTHREAD_PID]
+	st	r0, [r1, PTHREAD_TID]
+
+.Lgo_thread:
+#endif
 
 	; child jumps off to @fn with @arg as argument
 	j.d	[r10]
