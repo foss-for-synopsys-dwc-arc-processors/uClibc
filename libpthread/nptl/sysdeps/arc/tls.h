@@ -35,6 +35,7 @@ typedef struct
 } tcbhead_t;
 
 # define TLS_MULTIPLE_THREADS_IN_TCB 1
+# define TP_REG_OFF_FROM_TCB          (TLS_INIT_TCB_SIZE + 256)
 
 #define GET_TP()				\
 ({						\
@@ -42,11 +43,20 @@ typedef struct
 	__arc_tls;				\
 })
 
+#define GET_TCB()                               \
+({                                              \
+        long *tcb;                              \
+        tcb = GET_TP() -  TP_REG_OFF_FROM_TCB/4;\
+        tcb;                                    \
+})
+
 #else /* __ASSEMBLER__ */
 # include <tcb-offsets.h>
 
-.macro GET_TP	reg
-	mov	\reg, r25
+# define TP_REG_OFF_FROM_TCB          (TLS_PRE_TCB_SIZE + 256)
+
+.macro GET_TCB reg
+        sub \reg, r25, TP_REG_OFF_FROM_TCB
 .endm
 
 .macro THREAD_SELF reg
@@ -107,14 +117,17 @@ typedef struct
 /* Code to initially initialize the thread pointer.  This might need
    special attention since 'errno' is not yet available and if the
    operation can cause a failure 'errno' must not be touched.  */
-# define TLS_INIT_TP(tcbp, secondcall) 					\
-  ({	__asm__ __volatile__ ("mov r25, %0  \n" ::"r" (tcbp):"r25");	\
-	NULL;								\
+# define TLS_INIT_TP(tcbp, secondcall)          \
+  ({__asm__ __volatile__ (                      \
+        "add r25, %0, %1  \n"                   \
+        ::"r" (tcbp), "ir" (TP_REG_OFF_FROM_TCB)\
+        :"r25");                                \
+        NULL;                                   \
    })
 
 /* Return the address of the dtv for the current thread.  */
 # define THREAD_DTV() \
-  (((tcbhead_t *)GET_TP ())->dtv)
+  (((tcbhead_t *)GET_TCB ())->dtv)
 
 /* Return the thread descriptor for the current thread.
    The contained asm must *not* be marked volatile since otherwise
@@ -122,7 +135,7 @@ typedef struct
         struct pthread *self = thread_self();
    do not get optimized away.  */
 # define THREAD_SELF \
-  ((struct pthread *)GET_TP () - 1)
+  ((struct pthread *)GET_TCB () - 1)
 
 /* Magic for libthread_db to know how to do THREAD_SELF.  */
 # define DB_THREAD_SELF \
