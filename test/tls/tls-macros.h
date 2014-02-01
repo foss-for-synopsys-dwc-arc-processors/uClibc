@@ -857,12 +857,6 @@ register void *__gp __asm__("$29");
 
 #elif defined __arc__
 
-#define GET_TP()				\
-({						\
-	register long *__arc_tls __asm__("r25");\
-	__arc_tls;                              \
-})
-
 /* For now */
 #define TLS_GD(x)	TLS_IE(x)
 #define TLS_LD(x)	TLS_IE(x)

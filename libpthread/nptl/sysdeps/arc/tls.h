@@ -35,28 +35,20 @@ typedef struct
 } tcbhead_t;
 
 # define TLS_MULTIPLE_THREADS_IN_TCB 1
-# define TP_REG_OFF_FROM_TCB          (TLS_INIT_TCB_SIZE + 256)
 
-#define GET_TP()				\
-({						\
+#define GET_TCB()                               \
+({                                              \
 	register long *__arc_tls __asm__("r25");\
 	__arc_tls;				\
 })
 
-#define GET_TCB()                               \
-({                                              \
-        long *tcb;                              \
-        tcb = GET_TP() -  TP_REG_OFF_FROM_TCB/4;\
-        tcb;                                    \
-})
+#define GET_TP()        GET_TCB()
 
 #else /* __ASSEMBLER__ */
 # include <tcb-offsets.h>
 
-# define TP_REG_OFF_FROM_TCB          (TLS_PRE_TCB_SIZE + 256)
-
 .macro GET_TCB reg
-        sub \reg, r25, TP_REG_OFF_FROM_TCB
+        mov \reg, r25
 .endm
 
 .macro THREAD_SELF reg
@@ -120,7 +112,7 @@ typedef struct
 # define TLS_INIT_TP(tcbp, secondcall)          \
   ({__asm__ __volatile__ (                      \
         "add r25, %0, %1  \n"                   \
-        ::"r" (tcbp), "ir" (TP_REG_OFF_FROM_TCB)\
+        ::"r" (tcbp), "ir" (0)\
         :"r25");                                \
         NULL;                                   \
    })
