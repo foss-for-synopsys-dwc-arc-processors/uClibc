@@ -858,9 +858,15 @@ register void *__gp __asm__("$29");
 #elif defined __arc__
 
 /* For now */
-#define TLS_GD(x)	TLS_IE(x)
-#define TLS_LD(x)	TLS_IE(x)
+#define TLS_LD(x)	TLS_GD(x)
 
+#define TLS_GD(x)					\
+  ({ int *__result;					\
+     __asm__ ("ld %0, [pcl, @" #x "@tlsgd]      \n"     \
+	  "bl __tls_get_addr@plt                \n"				\
+	  "mov %0, r0                       \n"				\
+	  : "=&r" (__result));		\
+     __result; })
 #define TLS_LE(x)					\
   ({ int *__result;					\
      void *tp = GET_TP();		                \
