@@ -36,13 +36,7 @@ typedef struct
 
 # define TLS_MULTIPLE_THREADS_IN_TCB 1
 
-#define GET_TCB()                               \
-({                                              \
-	register long *__arc_tls __asm__("r25");\
-	__arc_tls;				\
-})
-
-#define GET_TP()        GET_TCB()
+#define GET_TCB()       __builtin_thread_pointer()
 
 #else /* __ASSEMBLER__ */
 # include <tcb-offsets.h>
@@ -110,10 +104,8 @@ typedef struct
    special attention since 'errno' is not yet available and if the
    operation can cause a failure 'errno' must not be touched.  */
 # define TLS_INIT_TP(tcbp, secondcall)          \
-  ({__asm__ __volatile__ (                      \
-        "add r25, %0, %1  \n"                   \
-        ::"r" (tcbp), "ir" (0)\
-        :"r25");                                \
+  ({                                            \
+        __builtin_set_thread_pointer(tcbp);     \
         NULL;                                   \
    })
 
