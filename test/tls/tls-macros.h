@@ -862,10 +862,10 @@ register void *__gp __asm__("$29");
 
 #define TLS_GD(x)					\
   ({ int *__result;					\
-     __asm__ ("add r0, pcl, @" #x "@tlsgd      \n"     \
-	  "bl __tls_get_addr@plt                \n"				\
-	  "mov %0, r0                       \n"				\
-	  : "=&r" (__result)::"r0");		\
+     __asm__ ("add r0, pcl, @" #x "@tlsgd      \n"     	\
+	  ".tls_gd_ld " #x "`bl __tls_get_addr@plt \n"	\
+	  "mov %0, r0                    \n"		\
+	  : "=&r" (__result)::"r0");			\
      __result; })
 
 #define TLS_LE(x)					\
