@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 #include <tls.h>
-#include <link.h>
+#include <../../include/link.h>
 #ifdef __UCLIBC__
 #include "dl-elf.h"
 #include "dl-hash.h"
