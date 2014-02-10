@@ -31,6 +31,7 @@ ENTRY(vfork)
 	cmp	r0, 0
 #ifdef RESTORE_PID
 	bz	1f	; child continues
+	THREAD_SELF r1		; Get to struct pthread (just before TCB)
 	st	r2, [r1, PTHREAD_PID]
 1:
 #endif
