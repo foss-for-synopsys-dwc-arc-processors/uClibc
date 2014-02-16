@@ -17,6 +17,12 @@
 
 #if defined(USE_TLS) && USE_TLS
 
+/* This minimal implementation is for static use only.  Because the linker
+   eliminates dynamic tls accesses in a static link (and in the descriptor
+   model, they don't directly involve __tls_get_addr in the first place),
+   this code should actually be dead now.
+   The full-featured implmenentation is found in ldso/ldso/dl-tls.c, and
+   forms part of ld-uClibc*.so .  */
 void *
 __tls_get_addr (GET_ADDR_ARGS)
 {
