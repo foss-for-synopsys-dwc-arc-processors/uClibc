@@ -18,10 +18,10 @@
 #if defined(USE_TLS) && USE_TLS
 
 void *
-__tls_get_addr (tls_index *ti)
+__tls_get_addr (GET_ADDR_ARGS)
 {
   dtv_t *dtv = THREAD_DTV ();
-  return (char *) dtv[1].pointer.val + ti->ti_offset;
+  return (char *) dtv[1].pointer.val + _ti_offset;
 }
 
 #endif

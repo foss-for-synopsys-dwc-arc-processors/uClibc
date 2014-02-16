@@ -155,6 +155,11 @@ elf_machine_relative (Elf32_Addr load_off, const Elf32_Addr rel_addr,
 	} while (--relative_count);
 }
 
+#define GET_ADDR_ARGS \
+  unsigned long int _ti_module, unsigned long int _ti_offset
+#define GET_ADDR_MODULE _ti_module
+#define GET_ADDR_OFFSET _ti_offset
+#define DONT_USE_TLS_INDEX
 /* Interface between [libgcc] tls_get_addr-descr.S / tls_get_gd_dispatch .  */
 typedef void * (*tls_get_addr_t) (int *);
 

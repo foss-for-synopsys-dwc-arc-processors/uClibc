@@ -25,4 +25,7 @@ typedef struct
 } tls_index;
 
 
-extern void *__tls_get_addr (tls_index *ti);
+#define GET_ADDR_ARGS \
+  unsigned long int _ti_module, unsigned long int _ti_offset
+
+extern void *__tls_get_addr (GET_ADDR_ARGS);
