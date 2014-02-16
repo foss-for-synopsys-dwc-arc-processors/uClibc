@@ -863,8 +863,8 @@ register void *__gp __asm__("$29");
 #define TLS_GD(x)					\
   ({ int *__result;					\
      __asm__ ("add r0, pcl, @" #x "@tlsgd      \n"     	\
-	  ".tls_gd_ld " #x, 0f "`ld_s r12,[r0]\n"		\
-	  "0:.tls_gd_call "#x" `j_s [r12]\n"		\
+	  ".tls_gd_ld " #x, 0f "`ld_s r12,[r0]\n"	\
+	  "0:\tj_s [r12]\n"				\
 	  "mov %0, r0                    \n"		\
 	  : "=&r" (__result)				\
 	  ::"r0","r9","r10","r11","r12,"cc"");		\
