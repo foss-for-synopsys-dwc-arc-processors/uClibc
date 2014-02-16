@@ -133,6 +133,12 @@ struct elf_resolve {
   unsigned long data_words;
 #endif
 
+#if defined (__arc__) && defined(USE_TLS) && USE_TLS
+  /* This is used to store the descriptor function to get the addresses
+     of variables defined in this module.  */
+  void * (*l_tls_get_addr) (int *);
+#endif
+
 #ifdef __FDPIC__
   /* Every loaded module holds a hashtable of function descriptors of
      functions defined in it, such that it's easy to release the

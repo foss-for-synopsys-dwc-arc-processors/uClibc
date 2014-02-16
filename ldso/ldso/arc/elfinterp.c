@@ -10,6 +10,7 @@
  * Licensed under the LGPL v2.1 or later, see the file COPYING.LIB in this tarball.
  */
 #include "ldso.h"
+#include "dl-sysdep.h"
 
 #define ARC_PLT_SIZE	12
 
@@ -78,6 +79,38 @@ _dl_linux_resolver(struct elf_resolve *tpnt, unsigned int plt_pc)
 	return (unsigned long) new_addr;
 }
 
+/*	__tls_get_ie_addr:
+	ld_s r0,[r0,4]
+        j_s.d [blink]
+        add r0,r0,ARC_RTP  */
+static void *
+__tls_get_ie_addr (int *p)
+{
+  return __builtin_thread_pointer () + p[1];
+}
+
+/* TPNT belongs to a tls variable definition.  Return the tls_get_addr
+   dispatcher for this that module.  */
+static tls_get_addr_t
+tls_get_gd_dispatch (struct elf_resolve *tpnt)
+{
+  if (tpnt->l_tls_offset != NO_TLS_OFFSET)
+	return __tls_get_ie_addr;
+  if (tpnt->l_tls_get_addr)
+	return tpnt->l_tls_get_addr;
+
+  /* We must call __tls_get_gd_dispatch in the target dso (i.e. the module
+     where the variable(s) in question is/are defined), where it is a
+     protected symbol.  */
+  char *symname = "__tls_get_gd_dispatch";
+  __tls_get_gd_dispatch_t get_dispatcher
+	= (__tls_get_gd_dispatch_t) _dl_find_hash (symname, &tpnt->symbol_scope,
+						   tpnt, ELF_RTYPE_CLASS_PLT,
+						   NULL);
+
+  return tpnt->l_tls_get_addr
+	= get_dispatcher (tpnt->l_tls_modid, _dl_tls_generation);
+}
 
 static int
 _dl_do_reloc(struct elf_resolve *tpnt, struct r_scope_elem *scope,
@@ -156,9 +189,11 @@ _dl_do_reloc(struct elf_resolve *tpnt, struct r_scope_elem *scope,
 		break;
 #if defined USE_TLS && USE_TLS
 	case R_ARC_TLS_DTPMOD:
-		*reloc_addr = tls_tpnt->l_tls_modid;
+		*reloc_addr = (int) tls_get_gd_dispatch (tls_tpnt);
 		break;
 	case R_ARC_TLS_DTPOFF:
+		if (tpnt->l_tls_offset != NO_TLS_OFFSET)
+		  symbol_addr += tpnt->l_tls_offset;
 		*reloc_addr = symbol_addr;
 		break;
 	case R_ARC_TLS_TPOFF:
