@@ -24,7 +24,7 @@ __tls_get_addr_refresh_dtv:
 	push_s r3
 	push_s blink
 	lsr r0,r10
-	bl __tls_get_addr
+	bl.d __tls_get_addr
 	mov_s r1,r12
 	pop_s blink
 	pop_s r3
