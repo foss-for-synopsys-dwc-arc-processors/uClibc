@@ -220,5 +220,5 @@ __tls_fixup_offset:
 	ld.ab r7,[sp,4]
 	ld.ab r6,[sp,4]
 	ld.ab r5,[sp,4]
-	b.d assign_result
+	b.d .Lassign_result
 	ld.ab r4,[sp,4]
