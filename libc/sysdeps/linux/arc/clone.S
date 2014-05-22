@@ -81,8 +81,8 @@ ENTRY(clone)
 .Lgo_thread:
 #endif
 #endif
-	; child jumps off to @fn with @arg as argument
-	j.d	[r10]
+	; child jumps off to @fn with @arg as argument, and returns here
+	jl.d	[r10]
 	mov	r0, r11
 
 	; falls thru to _exit() with result from @fn (already in r0)
