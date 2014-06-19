@@ -4,6 +4,7 @@
  * Licensed under the LGPL v2.1, see the file COPYING.LIB in this tarball.
  */
 
+#include <sys/syscall.h>
 #include <_lfs_64.h>
 #include <fcntl.h>
 #include <stdarg.h>
