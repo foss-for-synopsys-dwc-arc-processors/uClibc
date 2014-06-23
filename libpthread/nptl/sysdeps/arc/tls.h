@@ -39,7 +39,9 @@ typedef struct
 #else /* __ASSEMBLER__ */
 # include <tcb-offsets.h>
 
-#ifdef __A7__
+#ifdef __ARC_RTP__
+#define __ARC_TP_REG __ARC_RTP__
+#elif defined(__A7__)
 #define __ARC_TP_REG	r25
 #elif defined(__HS__)
 #define __ARC_TP_REG	r30

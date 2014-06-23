@@ -77,7 +77,9 @@ static const char *_dl_reltypes_tab[] =
         "R_ARC_TLS_GD_GOT",
         "R_ARC_TLS_GD_LD",      /* 70 */
         "R_ARC_TLS_GD_CALL",
-        "R_ARC_TLS_IE_GOT",
-        "",
-        "",
+	"R_ARC_TLS_GD_DEF",
+	"R_ARC_TLS_IE_GOT",
+	"R_ARC_TLS_DTPOFF_S9",
+	"R_ARC_TLS_LE_S9",	/* 75 */
+	"R_ARC_TLS_LE_32",
 };
