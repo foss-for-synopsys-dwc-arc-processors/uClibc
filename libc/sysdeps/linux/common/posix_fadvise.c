@@ -41,9 +41,13 @@ int posix_fadvise(int fd, off_t offset, off_t len, int advice)
 #  if __WORDSIZE == 64
 	ret = INTERNAL_SYSCALL(fadvise64_64, err, 4, fd, offset, len, advice);
 #  else
-#   if defined(__UCLIBC_SYSCALL_ALIGN_64BIT__) || defined(__arm__)
+#   if defined (__arm__) || \
+      (defined(__UCLIBC_SYSCALL_ALIGN_64BIT__) && (defined(__powerpc__) || defined(__xtensa__)))
 	ret = INTERNAL_SYSCALL(fadvise64_64, err, 6, fd, advice,
 			OFF_HI_LO (offset), OFF_HI_LO (len));
+#   elif defined(__UCLIBC_SYSCALL_ALIGN_64BIT__)
+	ret = INTERNAL_SYSCALL(fadvise64_64, err, 7, fd, 0,
+			OFF_HI_LO (offset), OFF_HI_LO (len), advice);
 #   else
 	ret = INTERNAL_SYSCALL(fadvise64_64, err, 6, fd,
 			OFF_HI_LO (offset), OFF_HI_LO (len), advice);
