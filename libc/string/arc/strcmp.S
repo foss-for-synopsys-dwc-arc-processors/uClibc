@@ -5,6 +5,8 @@
  * Licensed under the LGPL v2.1 or later, see the file COPYING.LIB in this tarball.
  */
 
+#ifdef __A7__
+
 #include <features.h>
 #include <sysdep.h>
 
@@ -99,4 +101,6 @@ libc_hidden_def(strcmp)
 #ifndef __UCLIBC_HAS_LOCALE__
 strong_alias(strcmp,strcoll)
 libc_hidden_def(strcoll)
+#endif
+
 #endif
