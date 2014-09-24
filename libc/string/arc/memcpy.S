@@ -5,8 +5,6 @@
  * Licensed under the LGPL v2.1 or later, see the file COPYING.LIB in this tarball.
  */
 
-#ifdef __A7__
-
 #include <sysdep.h>
 
 /* This memcpy implementation does not support objects of 1GB or larger -
@@ -71,5 +69,3 @@ ENTRY(memcpy)
 	stb	r12,[r5,0]
 END(memcpy)
 libc_hidden_def(memcpy)
-
-#endif
