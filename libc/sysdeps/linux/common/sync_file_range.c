@@ -24,7 +24,8 @@ static int __NC(sync_file_range)(int fd, off64_t offset, off64_t nbytes, unsigne
 {
 #  if defined __powerpc__ && __WORDSIZE == 64
 	return INLINE_SYSCALL(sync_file_range, 4, fd, offset, nbytes, flags);
-#  elif defined __mips__ && _MIPS_SIM == _ABIO32
+#  elif (defined __mips__ && _MIPS_SIM == _ABIO32) || \
+	(defined(__arc__) && defined(__UCLIBC_SYSCALL_ALIGN_64BIT__))
 	return INLINE_SYSCALL(sync_file_range, 7, fd, 0,
 			OFF64_HI_LO(offset), OFF64_HI_LO(nbytes), flags);
 #  else
