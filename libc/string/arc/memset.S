@@ -5,6 +5,8 @@
  * Licensed under the LGPL v2.1 or later, see the file COPYING.LIB in this tarball.
  */
 
+#ifdef __A7__
+
 #include <sysdep.h>
 
 #define SMALL	7 /* Must be at least 6 to deal with alignment/loop issues.  */
@@ -49,3 +51,5 @@ ENTRY(memset)
 	j_s	[blink]
 END(memset)
 libc_hidden_def(memset)
+
+#endif
