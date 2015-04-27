@@ -97,7 +97,7 @@ extern int __cxa_atexit(cxaefuncp, void *arg, void *dso_handle);
 
 /* remove old_atexit after 0.9.29 */
 #if defined(L_atexit) || defined(L_old_atexit)
-extern void *__dso_handle __attribute__ ((__weak__)) __attribute__((visibility ("hidden")));;
+extern void *__dso_handle __attribute__ ((__weak__));
 
 /*
  * register a function to be called at normal program termination
