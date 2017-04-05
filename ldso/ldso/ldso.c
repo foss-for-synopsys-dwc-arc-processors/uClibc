@@ -668,10 +668,10 @@ of this helper program; chances are you did not intend to run this program.\n\
 			 * dynamic linking.  We can set the protection back
 			 * again once we are done.
 			 */
-			_dl_debug_early("calling mprotect on the application program\n");
 			/* Now cover the application program. */
 			if (app_tpnt->dynamic_info[DT_TEXTREL]) {
 				int j;
+				_dl_debug_early("calling mprotect on the application program\n");
 				ElfW(Phdr) *ppnt_outer = ppnt;
 				ppnt = (ElfW(Phdr) *) auxvt[AT_PHDR].a_un.a_val;
 				for (j = 0; j < auxvt[AT_PHNUM].a_un.a_val; j++, ppnt++) {
