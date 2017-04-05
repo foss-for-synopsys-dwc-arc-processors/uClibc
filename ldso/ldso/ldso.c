@@ -671,9 +671,10 @@ of this helper program; chances are you did not intend to run this program.\n\
 			_dl_debug_early("calling mprotect on the application program\n");
 			/* Now cover the application program. */
 			if (app_tpnt->dynamic_info[DT_TEXTREL]) {
+				int j;
 				ElfW(Phdr) *ppnt_outer = ppnt;
 				ppnt = (ElfW(Phdr) *) auxvt[AT_PHDR].a_un.a_val;
-				for (i = 0; i < auxvt[AT_PHNUM].a_un.a_val; i++, ppnt++) {
+				for (j = 0; j < auxvt[AT_PHNUM].a_un.a_val; j++, ppnt++) {
 					if (ppnt->p_type == PT_LOAD && !(ppnt->p_flags & PF_W))
 						_dl_mprotect((void *) (DL_RELOC_ADDR(app_tpnt->loadaddr, ppnt->p_vaddr) & PAGE_ALIGN),
 							     (DL_RELOC_ADDR(app_tpnt->loadaddr, ppnt->p_vaddr) & ADDR_ALIGN) +
