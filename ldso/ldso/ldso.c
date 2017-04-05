@@ -673,6 +673,7 @@ of this helper program; chances are you did not intend to run this program.\n\
 			/* Now cover the application program. */
 			if (app_tpnt->dynamic_info[DT_TEXTREL]) {
 				int j;
+				_dl_debug_early("calling mprotect on the application program\n");
 				ElfW(Phdr) *ppnt_outer = ppnt;
 				_dl_debug_early("calling mprotect on the application program\n");
 				ppnt = (ElfW(Phdr) *) auxvt[AT_PHDR].a_un.a_val;
