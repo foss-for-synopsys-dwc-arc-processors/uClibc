@@ -68,6 +68,7 @@ extern int __syscall_error (int);
 #define INLINE_SYSCALL(name, nr_args, args...)				\
 ({									\
 	register int __res __asm__("r0");				\
+	__asm__ volatile ("" : : : "blink");  \
 	__res = INTERNAL_SYSCALL_NCS(__NR_##name, , nr_args, args);	\
 	if (__builtin_expect (INTERNAL_SYSCALL_ERROR_P ((__res), ), 0))	\
 	{								\
@@ -81,6 +82,7 @@ extern int __syscall_error (int);
 #define INLINE_SYSCALL_NCS(num, nr_args, args...)			\
 ({									\
 	register int __res __asm__("r0");				\
+	__asm__ volatile ("" : : : "blink");  \
 	__res = INTERNAL_SYSCALL_NCS(num, , nr_args, args);		\
 	if (__builtin_expect (INTERNAL_SYSCALL_ERROR_P ((__res), ), 0))	\
 	{								\
