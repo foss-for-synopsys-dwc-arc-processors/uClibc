@@ -30,6 +30,8 @@ void __arc_link_error (void);
 #define atomic_full_barrier() __asm__ __volatile__("dmb 3": : :"memory")
 #endif
 
+#define arc_noop_barrier() __asm__ __volatile__("nop": : :"memory")
+
 /* Atomic compare and exchange. */
 
 #define __arch_compare_and_exchange_val_8_acq(mem, newval, oldval) \
@@ -47,6 +49,8 @@ void __arc_link_error (void);
   ({									\
 	__typeof(oldval) prev;						\
 									\
+	atomic_full_barrier();						\
+									\
 	__asm__ __volatile__(						\
 	"1:	llock   %0, [%1]	\n"				\
 	"	brne    %0, %2, 2f	\n"				\
@@ -57,6 +61,8 @@ void __arc_link_error (void);
 	: "r"(mem), "ir"(oldval),					\
 	  "r"(newval) /* can't be "ir". scond can't take limm for "b" */\
 	: "cc", "memory");						\
+									\
+	atomic_full_barrier();						\
 									\
 	prev;								\
   })
@@ -100,11 +106,15 @@ void __arc_link_error (void);
   ({									\
 	__typeof__(*(mem)) val = newval;				\
 									\
+	atomic_full_barrier();						\
+									\
 	__asm__ __volatile__(						\
 	"ex %0, [%1]"							\
 	: "+r" (val)							\
 	: "r" (mem)							\
 	: "memory" );							\
+									\
+	atomic_full_barrier();						\
 									\
 	val;								\
   })
