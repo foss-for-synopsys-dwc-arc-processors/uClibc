@@ -40,7 +40,11 @@ __start:
 	ld_s	r1, [sp]	; argc
 
 	mov_s	r5, r0		; rltd_fini
+#ifdef __ARC64_ARCH32__
+	add	r2, sp, 4	; argv
+#else
 	add_s	r2, sp, 4	; argv
+#endif
 #ifdef L_Scrt1
 	ld	r0, [pcl, @main@gotpc]
 	ld	r3, [pcl, @_init@gotpc]

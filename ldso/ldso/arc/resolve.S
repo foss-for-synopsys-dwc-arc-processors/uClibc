@@ -12,30 +12,47 @@
 ; 	r10-r12 are already clobbered by PLTn, PLT0 thus neednot be saved
 
 .macro	SAVE_CALLER_SAVED
+#ifdef __ARC64_ARCH32__
+	push	r0
+	push	r1
+	push	r2
+	push	r3
+#else
 	push_s	r0
 	push_s	r1
 	push_s	r2
 	push_s	r3
-	st.a	r4, [sp, -4]
-	st.a	r5, [sp, -4]
-	st.a	r6, [sp, -4]
-	st.a	r7, [sp, -4]
-	st.a	r8, [sp, -4]
-	st.a	r9, [sp, -4]
+#endif
+	push	r4
+	push	r5
+	push	r6
+	push	r7
+	push	r8
+	push	r9
+#ifdef __ARC64_ARCH32__
+	push	blink
+#else
 	push_s	blink
+#endif
 .endm
 
 .macro RESTORE_CALLER_SAVED_BUT_R0
-	ld.ab	blink,[sp, 4]
-	ld.ab	r9, [sp, 4]
-	ld.ab	r8, [sp, 4]
-	ld.ab	r7, [sp, 4]
-	ld.ab	r6, [sp, 4]
-	ld.ab	r5, [sp, 4]
-	ld.ab	r4, [sp, 4]
-	pop_s   r3
-	pop_s   r2
-	pop_s   r1
+	pop	blink
+	pop	r9
+	pop	r8
+	pop	r7
+	pop	r6
+	pop	r5
+	pop	r4
+#ifdef __ARC64_ARCH32__
+	pop	r3
+	pop	r2
+	pop	r1
+#else
+	pop_s	r3
+	pop_s	r2
+	pop_s	r1
+#endif
 .endm
 
 ; Upon entry, PLTn, which led us here, sets up the following regs
@@ -53,5 +70,9 @@ ENTRY(_dl_linux_resolve)
 
 	RESTORE_CALLER_SAVED_BUT_R0
 	j_s.d   [r0]    ; r0 has resolved function addr
-	pop_s   r0      ; restore first arg to resolved call
+#ifdef __ARC64_ARCH32__
+	pop	r0      ; restore first arg to resolved call
+#else
+	pop_s	r0      ; restore first arg to resolved call
+#endif
 END(_dl_linux_resolve)
