@@ -4,6 +4,7 @@
  * Licensed under the LGPL v2.1 or later, see the file COPYING.LIB in this tarball.
  */
 
+#include <asm.h>
 #include <sysdep.h>
 #include <sys/syscall.h>
 
@@ -12,47 +13,30 @@
 ; 	r10-r12 are already clobbered by PLTn, PLT0 thus neednot be saved
 
 .macro	SAVE_CALLER_SAVED
-#ifdef __ARC64_ARCH32__
-	push	r0
-	push	r1
-	push	r2
-	push	r3
-#else
-	push_s	r0
-	push_s	r1
-	push_s	r2
-	push_s	r3
-#endif
-	push	r4
-	push	r5
-	push	r6
-	push	r7
-	push	r8
-	push	r9
-#ifdef __ARC64_ARCH32__
-	push	blink
-#else
-	push_s	blink
-#endif
+	PUSHR_S	r0
+	PUSHR_S	r1
+	PUSHR_S	r2
+	PUSHR_S	r3
+	PUSHR	r4
+	PUSHR	r5
+	PUSHR	r6
+	PUSHR	r7
+	PUSHR	r8
+	PUSHR	r9
+	PUSHR_S	blink
 .endm
 
 .macro RESTORE_CALLER_SAVED_BUT_R0
-	pop	blink
-	pop	r9
-	pop	r8
-	pop	r7
-	pop	r6
-	pop	r5
-	pop	r4
-#ifdef __ARC64_ARCH32__
-	pop	r3
-	pop	r2
-	pop	r1
-#else
-	pop_s	r3
-	pop_s	r2
-	pop_s	r1
-#endif
+	POPR	blink
+	POPR	r9
+	POPR	r8
+	POPR	r7
+	POPR	r6
+	POPR	r5
+	POPR	r4
+	POPR_S	r3
+	POPR_S	r2
+	POPR_S	r1
 .endm
 
 ; Upon entry, PLTn, which led us here, sets up the following regs
@@ -70,9 +54,5 @@ ENTRY(_dl_linux_resolve)
 
 	RESTORE_CALLER_SAVED_BUT_R0
 	j_s.d   [r0]    ; r0 has resolved function addr
-#ifdef __ARC64_ARCH32__
-	pop	r0      ; restore first arg to resolved call
-#else
-	pop_s	r0      ; restore first arg to resolved call
-#endif
+	POPR_S	r0      ; restore first arg to resolved call
 END(_dl_linux_resolve)
