@@ -47,6 +47,7 @@ void __arc_link_error (void);
   ({									\
 	__typeof(oldval) prev;						\
 									\
+	atomic_full_barrier();						\
 	__asm__ __volatile__(						\
 	"1:	llock   %0, [%1]	\n"				\
 	"	brne    %0, %2, 2f	\n"				\
@@ -58,6 +59,7 @@ void __arc_link_error (void);
 	  "r"(newval) /* can't be "ir". scond can't take limm for "b" */\
 	: "cc", "memory");						\
 									\
+	atomic_full_barrier();						\
 	prev;								\
   })
 
@@ -100,12 +102,14 @@ void __arc_link_error (void);
   ({									\
 	__typeof__(*(mem)) val = newval;				\
 									\
+	atomic_full_barrier();						\
 	__asm__ __volatile__(						\
 	"ex %0, [%1]"							\
 	: "+r" (val)							\
 	: "r" (mem)							\
 	: "memory" );							\
 									\
+	atomic_full_barrier();						\
 	val;								\
   })
 
