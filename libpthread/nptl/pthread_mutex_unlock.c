@@ -287,6 +287,7 @@ attribute_protected
 __pthread_mutex_unlock (
      pthread_mutex_t *mutex)
 {
+  atomic_full_barrier();
   return __pthread_mutex_unlock_usercnt (mutex, 1);
 }
 strong_alias (__pthread_mutex_unlock, pthread_mutex_unlock)
