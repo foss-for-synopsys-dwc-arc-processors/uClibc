@@ -26,8 +26,10 @@ void __arc_link_error (void);
 
 #ifdef __A7__
 #define atomic_full_barrier() __asm__ __volatile__("": : :"memory")
+#define ARC_BARRIER_INSTR 	""
 #else
 #define atomic_full_barrier() __asm__ __volatile__("dmb 3": : :"memory")
+#define ARC_BARRIER_INSTR 	"dmb 3"
 #endif
 
 /* Atomic compare and exchange. */
@@ -87,28 +89,6 @@ void __arc_link_error (void);
        != __atg3_old;							\
   })
 
-/* Atomic compare and exchange with acquire and release semantics */
-#define __arch_exchange_32_acq(mem, newval	)			\
-  __atomic_exchange_n (mem, newval, __ATOMIC_ACQUIRE)
-
-#define __arch_exchange_32_rel(mem, newval)				\
-  __atomic_exchange_n (mem, newval, __ATOMIC_RELEASE)
-
-
-#define atomic_exchange_acq(mem, newval)				\
-  ({									\
-    if (sizeof(*(mem)) != 4)						\
-        abort();							\
-    __arch_exchange_32_acq(mem, newval);				\
-  })
-
-#define atomic_exchange_rel(mem, newval)				\
-  ({									\
-    if (sizeof(*(mem)) != 4)						\
-        abort();							\
-    __arch_exchange_32_rel(mem, newval);				\
-  })
-
 #else /* !__CONFIG_ARC_HAS_ATOMICS__ */
 
 #ifndef __NR_arc_usr_cmpxchg
@@ -138,6 +118,8 @@ void __arc_link_error (void);
 	(__typeof(oldval)) __ret;					\
   })
 
+#endif
+
 /* Store NEWVALUE in *MEM and return the old value.
    Atomic EX is present in all configurations
  */
@@ -147,7 +129,8 @@ void __arc_link_error (void);
 	__typeof__(*(mem)) val = newval;				\
 									\
 	__asm__ __volatile__(						\
-	"ex %0, [%1]"							\
+	"ex %0, [%1]\n"							\
+	ARC_BARRIER_INSTR						\
 	: "+r" (val)							\
 	: "r" (mem)							\
 	: "memory" );							\
@@ -161,5 +144,3 @@ void __arc_link_error (void);
 		abort();						\
 	__arch_exchange_32_acq(mem, newval);				\
   })
-
-#endif
