@@ -138,9 +138,31 @@ void __arc_link_error (void);
 	val;								\
   })
 
+#define __arch_exchange_32_rel(mem, newval)				\
+  ({									\
+	__typeof__(*(mem)) val = newval;				\
+									\
+	__asm__ __volatile__(						\
+	ARC_BARRIER_INSTR"\n"						\
+	"ex %0, [%1]"							\
+	: "+r" (val)							\
+	: "r" (mem)							\
+	: "memory" );							\
+									\
+	val;								\
+  })
+
 #define atomic_exchange_acq(mem, newval)				\
   ({									\
 	if (sizeof(*(mem)) != 4)					\
 		abort();						\
 	__arch_exchange_32_acq(mem, newval);				\
   })
+
+#define atomic_exchange_rel(mem, newval)				\
+  ({									\
+	if (sizeof(*(mem)) != 4)					\
+		abort();						\
+	__arch_exchange_32_rel(mem, newval);				\
+  })
+
