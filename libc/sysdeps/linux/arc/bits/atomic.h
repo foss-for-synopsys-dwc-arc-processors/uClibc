@@ -43,17 +43,27 @@ void __arc_link_error (void);
 #define __arch_compare_and_exchange_val_64_acq(mem, newval, oldval) \
   ({ __arc_link_error (); oldval; })
 
-#define __arch_compare_and_exchange_val_8_rel(mem, newval, oldval) \
-  ({ __arc_link_error (); oldval; })
-
-#define __arch_compare_and_exchange_val_16_rel(mem, newval, oldval) \
-  ({ __arc_link_error (); oldval; })
-
-#define __arch_compare_and_exchange_val_64_rel(mem, newval, oldval) \
-  ({ __arc_link_error (); oldval; })
-
 #ifdef __CONFIG_ARC_HAS_ATOMICS__
 
+#ifdef __A7__
+#define __arch_compare_and_exchange_val_32_acq(mem, newval, oldval)     \
+  ({									\
+	__typeof(oldval) prev;						\
+									\
+	__asm__ __volatile__(						\
+	"1:	llock   %0, [%1]	\n"				\
+	"	brne    %0, %2, 2f	\n"				\
+	"	scond   %3, [%1]	\n"				\
+	"	bnz     1b		\n"				\
+	"2:				\n"				\
+	: "=&r"(prev)							\
+	: "r"(mem), "ir"(oldval),					\
+	  "r"(newval) /* can't be "ir". scond can't take limm for "b" */\
+	: "cc", "memory");						\
+									\
+	prev;								\
+  })
+#else /* !__A7__ */
 #define USE_ATOMIC_COMPILER_BUILTINS 1
 
 #define __arch_compare_and_exchange_val_32_acq(mem, newval, oldval)	\
@@ -63,6 +73,15 @@ void __arc_link_error (void);
                                  __ATOMIC_ACQUIRE, __ATOMIC_RELAXED);	\
     __oldval;								\
   })
+
+#define __arch_compare_and_exchange_val_8_rel(mem, newval, oldval) \
+  ({ __arc_link_error (); oldval; })
+
+#define __arch_compare_and_exchange_val_16_rel(mem, newval, oldval) \
+  ({ __arc_link_error (); oldval; })
+
+#define __arch_compare_and_exchange_val_64_rel(mem, newval, oldval) \
+  ({ __arc_link_error (); oldval; })
 
 #define __arch_compare_and_exchange_val_32_rel(mem, newval, oldval)	\
   ({									\
@@ -81,6 +100,7 @@ void __arc_link_error (void);
 #define atomic_compare_and_exchange_val_rel(mem, new, old)		\
   __atomic_val_bysize(__arch_compare_and_exchange_val, rel,		\
                        mem, new, old)
+
 /* Explicitly define here to use release semantics*/
 #define atomic_compare_and_exchange_bool_rel(mem, newval, oldval) \
   ({									\
@@ -88,6 +108,8 @@ void __arc_link_error (void);
      atomic_compare_and_exchange_val_rel (mem, newval, __atg3_old)	\
        != __atg3_old;							\
   })
+
+#endif /* __A7__ */
 
 #else /* !__CONFIG_ARC_HAS_ATOMICS__ */
 
